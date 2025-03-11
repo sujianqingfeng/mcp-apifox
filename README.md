@@ -36,6 +36,14 @@ pnpm add -g mcp-apifox
 APIFOX_ACCESS_TOKEN=your_apifox_access_token
 ```
 
+您也可以通过命令行参数提供访问令牌：
+
+```bash
+mcp-apifox --token=your_apifox_access_token
+# 或
+mcp-apifox --apifox-token=your_apifox_access_token
+```
+
 ## 使用方法
 
 ### 作为命令行工具

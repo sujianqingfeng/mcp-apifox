@@ -67,13 +67,27 @@ server.tool(
 	},
 	async ({ projectId, apiId }) => {
 		try {
+      // Get token from command line arguments or environment variable
+      let token = process.env.APIFOX_ACCESS_TOKEN
+      
+      // Check if token is provided in command line arguments
+      // Format: --token=your_token or --apifox-token=your_token
+      const args = process.argv.slice(2)
+      for (const arg of args) {
+        const tokenArg = arg.match(/^--(?:apifox-)?token=(.+)$/)
+        if (tokenArg) {
+          token = tokenArg[1]
+          break
+        }
+      }
+      
 			const response = await request(
 				`https://api.apifox.com/v1/projects/${projectId}/export-openapi`,
 				{
 					method: "POST",
 					headers: {
 						"X-Apifox-Api-Version": "2024-03-28",
-						Authorization: `Bearer ${process.env.APIFOX_ACCESS_TOKEN}`,
+						Authorization: `Bearer ${token}`,
 						"Content-Type": "application/json",
 					},
 					body: JSON.stringify({
