@@ -14,7 +14,6 @@
 
 ## 前提条件
 
-- Node.js（版本在 `.node-version` 中指定）
 - 拥有访问令牌的 Apifox 账户
 - 支持 Model Context Protocol 的 AI 助手
 
@@ -30,29 +29,49 @@ pnpm add -g mcp-apifox
 
 ## 配置
 
-在项目根目录创建一个包含 Apifox 访问令牌的 `.env` 文件：
+### 方法一
 
-```
-APIFOX_ACCESS_TOKEN=your_apifox_access_token
-```
-
-您也可以通过命令行参数提供访问令牌：
-
-```bash
-mcp-apifox --token=your_apifox_access_token
-# 或
-mcp-apifox --apifox-token=your_apifox_access_token
-```
-
-## 使用方法
-
-### 作为命令行工具
-
-```bash
-mcp-apifox
+```json
+{
+  "mcpServers": {
+    "apifox": {
+      "command": "npx",
+      "args": [
+        "mcp-apifox@latest"
+      ],
+      "env": {
+        "APIFOX_ACCESS_TOKEN": ""
+      }
+    }
+  }
+}
 ```
 
-这将在标准输入输出上启动 MCP 服务器，使其能够与 AI 助手通信。
+
+### 方法二
+
+```json
+{
+  "mcpServers": {
+    "apifox": {
+      "command": "npx",
+      "args": [
+        "mcp-apifox@latest",
+        "--token=xxxx"
+      ]
+    }
+  }
+}
+```
+
+
+## 使用
+
+通过下面这种写作链接就可以获取接口信息，需要维护者权限
+
+```
+https://app.apifox.com/link/project/${projectId}/apis/api-${apiId}
+```
 
 ### 可用工具
 
@@ -76,22 +95,3 @@ mcp-apifox
 
 输出：
 - 请求的 API 的 OpenAPI 规范
-
-## 开发
-
-```bash
-# 安装依赖
-pnpm install
-
-# 构建项目
-pnpm build
-
-# 以监视模式运行开发环境
-pnpm dev
-
-# 预览构建的包
-pnpm preview
-
-# 运行测试
-pnpm test
-```
