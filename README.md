@@ -37,6 +37,7 @@ pnpm add -g mcp-apifox
     "apifox": {
       "command": "npx",
       "args": [
+        "-y",
         "mcp-apifox@latest"
       ],
       "env": {
@@ -56,6 +57,7 @@ pnpm add -g mcp-apifox
     "apifox": {
       "command": "npx",
       "args": [
+        "-y",
         "mcp-apifox@latest",
         "--token=xxxx"
       ]
@@ -67,7 +69,7 @@ pnpm add -g mcp-apifox
 
 ## 使用
 
-通过下面这种写作链接就可以获取接口信息，需要维护者权限
+通过下面这种协作链接就可以获取接口信息，需要维护者权限
 
 ```
 https://app.apifox.com/link/project/${projectId}/apis/api-${apiId}
