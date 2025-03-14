@@ -2,8 +2,8 @@
 
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js"
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
-import { request } from "undici"
 import { z } from "zod"
+import { extractProjectIdAndApiIdFromText, fetchApiInfoApi } from "./utils/apifox.js"
 
 const server = new McpServer({
 	name: "apifox",
@@ -11,7 +11,7 @@ const server = new McpServer({
 })
 
 server.tool(
-	"get-apifox-project-id-and-api-id-from-url",
+	"get_apifox_project_id_and_api_id_from_url",
 	"Get the project ID and API ID of Apifox from the URL.",
 	{
 		text: z
@@ -19,33 +19,7 @@ server.tool(
 			.describe("The text to extract the project id and api id from"),
 	},
 	({ text }) => {
-		const urlPattern = /apifox\.com\/link\/project\/(\d+)\/apis\/api-(\d+)/
-		const contentPattern = /project\/(\d+).*api-(\d+)/
-
-		let projectId = ""
-		let apiId = ""
-
-		// 寻找输入中的 URL 或相关内容
-		const lines = text.split("\n")
-		for (const line of lines) {
-			const trimmedLine = line.trim()
-
-			// 尝试匹配完整 URL
-			const urlMatch = trimmedLine.match(urlPattern)
-			if (urlMatch) {
-				projectId = urlMatch[1]
-				apiId = urlMatch[2]
-				break
-			}
-
-			// 尝试匹配部分路径
-			const contentMatch = trimmedLine.match(contentPattern)
-			if (contentMatch) {
-				projectId = contentMatch[1]
-				apiId = contentMatch[2]
-				break
-			}
-		}
+    const { projectId, apiId } = extractProjectIdAndApiIdFromText(text)
 
 		return {
 			content: [
@@ -59,7 +33,7 @@ server.tool(
 )
 
 server.tool(
-	"get-apifox-api-info",
+	"get_apifox_api_info",
 	"Get the info of Apifox API.",
 	{
 		projectId: z.string().describe("The project ID of Apifox"),
@@ -80,32 +54,11 @@ server.tool(
           break
         }
       }
+      if (!token) {
+        throw new Error("No token provided")
+      }
       
-			const response = await request(
-				`https://api.apifox.com/v1/projects/${projectId}/export-openapi`,
-				{
-					method: "POST",
-					headers: {
-						"X-Apifox-Api-Version": "2024-03-28",
-						Authorization: `Bearer ${token}`,
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify({
-						scope: {
-							type: "SELECTED_ENDPOINTS",
-							selectedEndpointIds: [apiId],
-						},
-						options: {
-							includeApifoxExtensionProperties: false,
-							addFoldersToTags: false,
-						},
-						oasVersion: "3.1",
-						exportFormat: "JSON",
-					}),
-				},
-			)
-
-			const result = await response.body.text()
+			const result = await fetchApiInfoApi(projectId, apiId, token)
 
 			return {
 				content: [

@@ -1,6 +1,6 @@
 {
   "name": "mcp-apifox",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "bin": {
 		"mcp-apifox": "dist/index.js"
 	},
